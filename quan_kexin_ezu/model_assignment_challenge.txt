@@ -1,0 +1,18 @@
+Customization: Search and Filter Options for Enhanced Navigation
+As our dataset grows, efficiently finding specific entries in the Django Admin interface becomes increasingly important. By adding search and filter capabilities, we can quickly locate records such as specific semesters, courses, or instructors.
+
+For details of implementation, if we take the following modifications in admin.py, it will enable search and filter functionality:
+@admin.register(Course)
+class CourseAdmin(admin.ModelAdmin):
+    list_display = ('course_number', 'course_name')
+    search_fields = ('course_number', 'course_name')  # Enables search bar
+    list_filter = ('course_name',)  # Adds filter sidebar
+
+Similarly, for Semester:
+@admin.register(Semester)
+class SemesterAdmin(admin.ModelAdmin):
+    list_display = ('year', 'period')
+    search_fields = ('year__year', 'period__period_name')
+    list_filter = ('year', 'period')
+
+This customization enhances usability by allowing users to search for specific records and filter them by attributes, which makes model testing and data management more efficient.

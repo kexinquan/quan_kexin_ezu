@@ -1,0 +1,32 @@
+Customizing the Django Admin App for Writing and Testing Django Template Files
+
+
+The Django Admin app provides a powerful interface for managing application data and can be customized to improve workflows related to writing and testing Django template files. By tailoring the Django Admin to our needs, we can streamline template management, improve debugging efficiency, and enhance visibility into template-related issues.
+
+Customization 1: Template Preview in the Django Admin Panel
+
+One useful customization would be adding a preview feature for templates directly in the Django Admin interface. This would allow users to see how a template renders without needing to manually navigate to a front-end view.
+
+These are the benefits by adopting this customization:
+
+1. Saves time by eliminating the need to load and reload front-end pages.
+
+2. Allows quick testing of changes in templates without leaving the Django Admin panel.
+
+3. Helps catch formatting or syntax issues before deploying changes.
+
+Below are the pseudo-implementation codes that we could follow:
+from django.contrib import admin
+from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
+from .models import TemplateFile
+
+class TemplateAdmin(admin.ModelAdmin):
+    list_display = ('name', 'created_at')
+    readonly_fields = ('preview',)
+    
+    def preview(self, obj):
+        rendered_template = render_to_string(obj.file_path)
+        return mark_safe(f'<iframe width="100%" height="400px">{rendered_template}</iframe>')
+
+admin.site.register(TemplateFile, TemplateAdmin
