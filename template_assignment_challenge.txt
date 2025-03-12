@@ -1,32 +1,26 @@
-Customizing the Django Admin App for Writing and Testing Django Template Files
+The Django Admin site provides a powerful interface for managing database records, debugging models, and testing business logic. For this week’s assignment, which involves working with urls.py, views.py, and template files, customizing the Django Admin can significantly improve efficiency in testing and managing our application.
 
+Customization: Improving URL Management with Custom Admin Actions
+As we modify and test urls.py, it is often difficult to track dynamic URL routing or manually check route configurations.
+Add a custom admin action to display active URLs, making it easier to debug and validate URL patterns.
+Implementation Steps:
+1. Create an admin action that lists active URLs.
+2. Register it in admin.py so it appears as a button in the Django Admin panel.
 
-The Django Admin app provides a powerful interface for managing application data and can be customized to improve workflows related to writing and testing Django template files. By tailoring the Django Admin to our needs, we can streamline template management, improve debugging efficiency, and enhance visibility into template-related issues.
-
-Customization 1: Template Preview in the Django Admin Panel
-
-One useful customization would be adding a preview feature for templates directly in the Django Admin interface. This would allow users to see how a template renders without needing to manually navigate to a front-end view.
-
-These are the benefits by adopting this customization:
-
-1. Saves time by eliminating the need to load and reload front-end pages.
-
-2. Allows quick testing of changes in templates without leaving the Django Admin panel.
-
-3. Helps catch formatting or syntax issues before deploying changes.
-
-Below are the pseudo-implementation codes that we could follow:
 from django.contrib import admin
-from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
-from .models import TemplateFile
+from django.urls import get_resolver
+from django.http import HttpResponse
 
-class TemplateAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_at')
-    readonly_fields = ('preview',)
-    
-    def preview(self, obj):
-        rendered_template = render_to_string(obj.file_path)
-        return mark_safe(f'<iframe width="100%" height="400px">{rendered_template}</iframe>')
+@admin.action(description="Show Active URLs")
+def show_urls(modeladmin, request, queryset):
+    urlconf = get_resolver()
+    urls = "\n".join([str(pattern.pattern) for pattern in urlconf.url_patterns])
+    return HttpResponse(f"<pre>{urls}</pre>")
 
-admin.site.register(TemplateFile, TemplateAdmin
+class MyModelAdmin(admin.ModelAdmin):
+    actions = [show_urls]
+
+admin.site.register(MyModel, MyModelAdmin)
+
+
+In this way, it allows quick verification of urls.py changes directly in the Admin panel, which helps ensure URL patterns are correctly mapped without checking them manually.
