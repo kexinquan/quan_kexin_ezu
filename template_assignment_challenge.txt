@@ -1,26 +1,30 @@
-The Django Admin site provides a powerful interface for managing database records, debugging models, and testing business logic. For this week’s assignment, which involves working with urls.py, views.py, and template files, customizing the Django Admin can significantly improve efficiency in testing and managing our application.
+Customizing the Django Admin for Improved Development Efficiency
 
-Customization: Improving URL Management with Custom Admin Actions
-As we modify and test urls.py, it is often difficult to track dynamic URL routing or manually check route configurations.
-Add a custom admin action to display active URLs, making it easier to debug and validate URL patterns.
-Implementation Steps:
-1. Create an admin action that lists active URLs.
-2. Register it in admin.py so it appears as a button in the Django Admin panel.
+The Django Admin app is a powerful built-in tool that provides a user-friendly interface for managing database records.
+Customizing the admin interface can significantly enhance the efficiency of writing, testing, and debugging code in this assignment.
+
+1. Enhancing Django Admin for Managing URLs and Views
+Since urls.py and views.py define the core request-response cycle of our application, we can customize the Django Admin to:
+
+Automatically display registered URL patterns: This would help developers see which views are linked to specific URLs.
+Provide a direct link to view each page in the frontend: This would allow quick navigation from the Admin to test different views.
+Customization 1: Admin Action to View URL Mappings
+To improve visibility into registered URL patterns, we can create a custom admin action that lists all URLs available in urls.py.
+
+Steps to Implement:1) Modify the admin.py file to include a custom admin action that fetches all registered URLs. 2) Display this action in the Django Admin for easy reference.
+In admin.py:
 
 from django.contrib import admin
 from django.urls import get_resolver
-from django.http import HttpResponse
 
-@admin.action(description="Show Active URLs")
-def show_urls(modeladmin, request, queryset):
-    urlconf = get_resolver()
-    urls = "\n".join([str(pattern.pattern) for pattern in urlconf.url_patterns])
-    return HttpResponse(f"<pre>{urls}</pre>")
+class URLAdmin(admin.ModelAdmin):
+    def show_registered_urls(self, request):
+        url_patterns = get_resolver().url_patterns
+        return "\n".join([str(pattern) for pattern in url_patterns])
 
-class MyModelAdmin(admin.ModelAdmin):
-    actions = [show_urls]
+    show_registered_urls.short_description = "Show all registered URLs"
 
-admin.site.register(MyModel, MyModelAdmin)
+admin.site.register(URLAdmin)
 
+Using this function, it will provide a list of all available URLs, making debugging easier.
 
-In this way, it allows quick verification of urls.py changes directly in the Admin panel, which helps ensure URL patterns are correctly mapped without checking them manually.

@@ -1,0 +1,24 @@
+Customizing Django Admin for Enhanced Development & Testing
+
+This week’s assignment focuses on writing and testing Django models, views, and forms.
+The Django Admin interface can be a powerful tool for interacting with these elements, especially during development.
+Customizing the Admin can streamline workflows, improve visibility, and reduce debugging time.
+
+
+Customization 1: Displaying Related Fields with list_display and list_filter
+The purpose is to enhance visibility into model relationships and attributes when testing and reviewing data. Several benefits including:
+1) Makes it easier to inspect and debug data entered via forms or views.
+2)Helps quickly verify correctness of model relationships (e.g., which user submitted a form, or the status of a record).
+
+Example:
+If we are working with a Submission model that links to User and has a status field:
+
+class SubmissionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'status', 'created_at')
+    list_filter = ('status', 'created_at')
+
+
+Conclusion:
+These admin customizations serve as quick wins for improving efficiency during development and testing.
+By making the Admin interface more informative and interactive, developers can detect issues faster and work more effectively with the data.
+

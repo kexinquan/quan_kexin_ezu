@@ -1,0 +1,22 @@
+Django Admin Customization for EZU Assignment
+
+My proposed customization: Inline Editing for Registration within StudentAdmin. For allowing Registration objects to
+be edited directly on the Student admin detail page using TabularInline or StackedInline.
+This lets developers or admins assign students to sections or update registrations quickly without switching between models.
+The benefit of this customization can 1. speed up testing and data entry during development.
+2. Reduces context switching when validating relationships between students and their registered sections.
+3. Improves admin usability by providing a consolidated view of student registration activity.
+
+from django.contrib import admin
+from courseinfo.models import Student, Registration
+
+class RegistrationInline(admin.TabularInline):  # or admin.StackedInline
+    model = Registration
+    extra = 1  # show 1 empty row for adding new
+    autocomplete_fields = ['section']
+
+@admin.register(Student)
+class StudentAdmin(admin.ModelAdmin):
+    list_display = ['first_name', 'last_name']
+    inlines = [RegistrationInline]
+
